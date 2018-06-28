@@ -63,8 +63,20 @@ Scene::~Scene()
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
+
+void Scene::updateProjView()
+{
+    GLfloat w = (GLfloat)width;
+    GLfloat h = (GLfloat)height;
+    GLfloat aspect = w / h;
+    /* TODO: fov, far, near */
+    projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+    glViewport(0, 0, width, height);
+}
+
 void Scene::run()
 {
+    updateProjView();
     GLfloat vertices[] = {
         /* Positions        Colors            Textures */
          0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
@@ -140,7 +152,7 @@ void Scene::run()
                         case SDL_WINDOWEVENT_SIZE_CHANGED:
                             width = event.window.data1;
                             height = event.window.data2;
-                            glViewport(0, 0, width, height);
+                            updateProjView();
                             break;
                     }
                     break;
@@ -166,8 +178,14 @@ void Scene::run()
 
         /* GLfloat time = SDL_GetTicks() / 1000.0f; */
         {
-            glm::mat4 trans = glm::mat4(1.0f);
-            shader.setMat4("transform", glm::value_ptr(trans));
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            glm::mat4 view = glm::mat4(1.0f);
+            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+            shader.setMat4("projection", glm::value_ptr(projection));
+            shader.setMat4("view", glm::value_ptr(view));
+            shader.setMat4("model", glm::value_ptr(model));
 
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         }

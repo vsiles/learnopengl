@@ -4,6 +4,10 @@
 #include <string>
 #include <memory>
 #include <vector>
+
+#include "glm/mat4x4.hpp"
+
+#include "main.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
 
@@ -25,6 +29,9 @@ namespace vinz {
             int height;
             ShaderProgram shader;
             Texture tex0, tex1;
+            glm::mat4 projection;
+
+            void updateProjView();
 
         public:
             Scene() = delete;
