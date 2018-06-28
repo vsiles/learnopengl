@@ -39,13 +39,14 @@ Shader::Shader(const string &filename, Shader::Type type)
 
 Shader::~Shader()
 {
-    glDeleteShader(id);
+    if (glIsShader(id))
+        glDeleteShader(id);
 }
 
 bool Shader::from_bytes(const vector<char> &shader, Shader::Type type,
                         ShaderFailure &cause)
 {
-    if (id != 0) {
+    if (glIsShader(id)) {
         glDeleteShader(id);
     }
 
@@ -82,7 +83,7 @@ bool Shader::from_bytes(const vector<char> &shader, Shader::Type type,
 bool ShaderProgram::init(const Shader &vert, const Shader &frag,
                          ShaderFailure &cause)
 {
-    if (id != 0)
+    if (glIsProgram(id))
         glDeleteProgram(id);
 
     id = glCreateProgram();
@@ -107,7 +108,7 @@ bool ShaderProgram::init(const Shader &vert, const Shader &frag,
 
 ShaderProgram::~ShaderProgram()
 {
-    if (id != 0) {
+    if (glIsProgram(id)) {
         glDeleteProgram(id);
     }
 }
