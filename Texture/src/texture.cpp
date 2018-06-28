@@ -95,9 +95,15 @@ bool Texture::init(const vector<unsigned char> &data, size_t bytes)
         cerr << "IMG_Load_RW() failure: " << SDL_GetError() << endl;
         return false;
     }
-
-    bool ok = init(surf);
+    SDL_Surface *isurf = flip(surf);
     SDL_FreeSurface(surf);
+    if (isurf == nullptr) {
+        cerr << "Can't flip surface" << endl;
+        return false;
+    }
+
+    bool ok = init(isurf);
+    SDL_FreeSurface(isurf);
     return ok;
 }
 
@@ -109,8 +115,15 @@ bool Texture::init(const string &path)
         return false;
     }
 
-    bool ok = init(surf);
+    SDL_Surface *isurf = flip(surf);
     SDL_FreeSurface(surf);
+    if (isurf == nullptr) {
+        cerr << "Can't flip surface" << endl;
+        return false;
+    }
+
+    bool ok = init(isurf);
+    SDL_FreeSurface(isurf);
     return ok;
 }
 

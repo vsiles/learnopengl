@@ -24,7 +24,7 @@ namespace vinz {
             int width;
             int height;
             ShaderProgram shader;
-            Texture tex0;
+            Texture tex0, tex1;
 
         public:
             Scene() = delete;

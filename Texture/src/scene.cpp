@@ -150,9 +150,14 @@ void Scene::run()
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 #else
         shader.activate();
-        // no need to set explicitely the 'ourTexture' uniform, it is done
-        // automatically by the texture binding process to GL_TEXTURE0
+        glActiveTexture(GL_TEXTURE0);
         tex0.bind();
+        glActiveTexture(GL_TEXTURE1);
+        tex1.bind();
+
+        shader.setInt("texture1", 0);
+        shader.setInt("texture2", 1);
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 #endif
@@ -196,6 +201,11 @@ bool Scene::init(string &res_path)
     cerr << "Loading container.jpg" << endl;
     if (!tex0.init(res_path + "images/container.jpg")) {
         cerr << "Can't load container.jpg" << endl;
+        return false;
+    }
+    cerr << "Loading awesomeface.png" << endl;
+    if (!tex1.init(res_path + "images/awesomeface.png")) {
+        cerr << "Can't load awesomeface.png" << endl;
         return false;
     }
 
