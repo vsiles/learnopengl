@@ -171,8 +171,8 @@ void Scene::run()
 
 bool Scene::init(string &res_path)
 {
-    string vertex_shader = res_path + "shaders/shadertest.vert";
-    string fragment_shader = res_path + "shaders/shadertest.frag";
+    string vertex_shader = res_path + "shaders/texture.vert";
+    string fragment_shader = res_path + "shaders/texture.frag";
 
     try {
         cerr << "Vertex shader compiling..." << endl;
