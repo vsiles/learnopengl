@@ -26,8 +26,10 @@ static bool get_resource_path(string &path)
     return true;
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
+    (void)argc;
+    (void)argv;
     int ret = EXIT_FAILURE;
     try {
         Scene scene("Hello GL", WIDTH, HEIGHT);

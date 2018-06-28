@@ -17,8 +17,8 @@ Scene::Scene(string name, int width, int height)
         throw SceneFailure(SceneFailure::Cause::Init, SDL_GetError());
     }
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
                         SDL_GL_CONTEXT_PROFILE_CORE);
 
@@ -63,6 +63,7 @@ Scene::~Scene()
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
+
 void Scene::run()
 {
     GLfloat vertices[] = {
@@ -113,6 +114,9 @@ void Scene::run()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+    shader.activate();
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
     /* uncomment to draw in wireframe mode */
     /* glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); */
 
@@ -153,15 +157,12 @@ void Scene::run()
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.activate();
         glActiveTexture(GL_TEXTURE0);
         tex0.bind();
         glActiveTexture(GL_TEXTURE1);
         tex1.bind();
 
-        shader.setInt("texture1", 0);
-        shader.setInt("texture2", 1);
-
+        shader.activate();
         glBindVertexArray(VAO);
 
         GLfloat time = SDL_GetTicks() / 1000.0f;
