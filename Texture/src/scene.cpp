@@ -62,11 +62,11 @@ Scene::~Scene()
 void Scene::run()
 {
     GLfloat vertices[] = {
-        /* Positions        Colors */
-         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, 0.0f, 0.6f, 0.6f, 0.6f
+        /* Positions        Colors            Textures */
+         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f
     };
 
     GLuint indices[] = {
@@ -93,13 +93,17 @@ void Scene::run()
     }
 
     /* 0 as in 'location = 0' in the vertex shader: position */
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                           nullptr);
     glEnableVertexAttribArray(0);
     /* 1 as in 'location = 1' in the vertex shader: color */
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                           reinterpret_cast<void *>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    /* 2 as in 'location = 2' in the vertex shader: texture coord */
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                          reinterpret_cast<void *>(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
     glBindVertexArray(0);
     /* Doing after the VAO is unbound */
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -146,6 +150,9 @@ void Scene::run()
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 #else
         shader.activate();
+        // no need to set explicitely the 'ourTexture' uniform, it is done
+        // automatically by the texture binding process to GL_TEXTURE0
+        tex0.bind();
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 #endif
@@ -183,6 +190,12 @@ bool Scene::init(string &res_path)
                 cerr << "Can't access shader file" << endl;
                 break;
         }
+        return false;
+    }
+
+    cerr << "Loading container.jpg" << endl;
+    if (!tex0.init(res_path + "images/container.jpg")) {
+        cerr << "Can't load container.jpg" << endl;
         return false;
     }
 

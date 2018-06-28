@@ -22,7 +22,7 @@ namespace vinz {
             Shader() = delete;
             Shader(const std::string &filename, Type type);
             Shader(const std::vector<char> &shader, Type type);
-            Shader(Shader &&s);
+            Shader(Shader &&s) = default;
             ~Shader();
 
             /* Forbid copy or assignment */
@@ -45,8 +45,9 @@ namespace vinz {
         public:
             ShaderProgram():id(0) {}
             ~ShaderProgram();
-
             ShaderProgram(ShaderProgram const &) = delete;
+            ShaderProgram(ShaderProgram &&) = default;
+
             ShaderProgram& operator=(ShaderProgram const &) = delete;
             ShaderProgram& operator=(ShaderProgram &&) = default;
             bool init(const Shader &vert, const Shader &frag,

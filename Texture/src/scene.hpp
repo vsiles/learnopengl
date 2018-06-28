@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include "shader.hpp"
+#include "texture.hpp"
 
 struct SceneFailure {
     enum class Cause {
@@ -23,6 +24,7 @@ namespace vinz {
             int width;
             int height;
             ShaderProgram shader;
+            Texture tex0;
 
         public:
             Scene() = delete;

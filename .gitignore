@@ -38,5 +38,6 @@ release/
 # Install target
 bin/
 
-# Vim temp files
+# Vim temp files + YCM
 .*.swp
+compile_commands.json
