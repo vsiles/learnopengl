@@ -24,6 +24,16 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 	endif()
 endif()
 
+# Vim YouCompleteMe stuff
+set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+if (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
+  execute_process (COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
+  )
+endif()
+
 # Look up SDL2 and add the include directory to our include path
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})
