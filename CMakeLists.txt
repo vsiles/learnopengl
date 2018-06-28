@@ -49,3 +49,4 @@ include_directories(${opengl_SOURCE_DIR}/include)
 # First test program
 add_subdirectory(FirstWindow)
 add_subdirectory(ShaderTest)
+add_subdirectory(Texture)
