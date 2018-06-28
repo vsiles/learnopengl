@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# Build target
+debug/
+release/
+
+# Install target
+bin/
+
+# Vim temp files
+.*.swp
