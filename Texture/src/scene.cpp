@@ -1,4 +1,8 @@
 #include <iostream>
+/* #define GLM_FORCE_MESSAGES */
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "scene.hpp"
 
@@ -141,14 +145,6 @@ void Scene::run()
         /* FIXME: Should be done on resize & stuff, not here */
         glViewport(0, 0, width, height);
 
-#if 0
-        GLfloat timeValue = SDL_GetTicks() / 1000.0f;
-        GLfloat greeValue = (sin(timeValue) / 2.0f) + 0.5f;
-        shader.activate();
-        shader.setFloat("ourColor", greeValue);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-#else
         shader.activate();
         glActiveTexture(GL_TEXTURE0);
         tex0.bind();
@@ -159,9 +155,28 @@ void Scene::run()
         shader.setInt("texture2", 1);
 
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-#endif
 
+        GLfloat time = SDL_GetTicks() / 1000.0f;
+        {
+            glm::mat4 trans = glm::mat4(1.0f);
+            trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+            trans = glm::rotate(trans, time,glm::vec3(0.0f, 0.0f, 1.0f));
+            shader.setMat4("transform", glm::value_ptr(trans));
+
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        }
+
+        {
+            GLfloat factor = sin(time);
+            glm::mat4 trans = glm::mat4(1.0f);
+            trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+            trans = glm::scale(trans, glm::vec3(factor, factor, factor));
+            shader.setMat4("transform", glm::value_ptr(trans));
+
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        }
+
+        glBindVertexArray(0);
         SDL_GL_SwapWindow(window);
     }
 

@@ -6,6 +6,7 @@ Depends on:
 - C++
 - [CMake](https://cmake.org/)
 - [GL3W](https://github.com/skaslev/gl3w/)
+- [GLM](https://glm.g-truc.net/0.9.9/index.html)
 - [SDL 2.0](https://www.libsdl.org/)
 - [SDL\_image 2.0](https://www.libsdl.org/projects/SDL_image/)
 

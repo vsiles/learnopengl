@@ -121,17 +121,23 @@ void ShaderProgram::activate() const
 void ShaderProgram::setBool(const string &name, bool value) const
 {
     GLint loc = glGetUniformLocation(id, name.c_str());
-    glUniform1i(loc, (int)value);
+    glUniform1i(loc, (GLint)value);
 }
 
-void ShaderProgram::setInt(const string &name, int value) const
+void ShaderProgram::setInt(const string &name, GLint value) const
 {
     GLint loc = glGetUniformLocation(id, name.c_str());
     glUniform1i(loc, value);
 }
 
-void ShaderProgram::setFloat(const string &name, float value) const
+void ShaderProgram::setFloat(const string &name, GLfloat value) const
 {
     GLint loc = glGetUniformLocation(id, name.c_str());
     glUniform1f(loc, value);
+}
+
+void ShaderProgram::setMat4(const string &name, GLfloat *ptr) const
+{
+    GLint loc = glGetUniformLocation(id, name.c_str());
+    glUniformMatrix4fv(loc, 1, GL_FALSE, ptr);
 }
