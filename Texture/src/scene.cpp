@@ -31,7 +31,8 @@ Scene::Scene(string name, int width, int height)
     window = SDL_CreateWindow(name.c_str(),
                               SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                               width, height,
-                              SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+                              SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL |
+                              SDL_WINDOW_RESIZABLE);
 
     if (window == nullptr) {
         const char *err = SDL_GetError();
@@ -62,7 +63,6 @@ Scene::~Scene()
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
-
 void Scene::run()
 {
     GLfloat vertices[] = {
@@ -134,6 +134,16 @@ void Scene::run()
                             done = true;
                     }
                     break;
+                case SDL_WINDOWEVENT:
+                    switch (event.window.event) {
+                        case SDL_WINDOWEVENT_RESIZED:
+                        case SDL_WINDOWEVENT_SIZE_CHANGED:
+                            width = event.window.data1;
+                            height = event.window.data2;
+                            glViewport(0, 0, width, height);
+                            break;
+                    }
+                    break;
             }
             if (done)
                 break;
@@ -142,8 +152,6 @@ void Scene::run()
             break;
 
         glClear(GL_COLOR_BUFFER_BIT);
-        /* FIXME: Should be done on resize & stuff, not here */
-        glViewport(0, 0, width, height);
 
         shader.activate();
         glActiveTexture(GL_TEXTURE0);
