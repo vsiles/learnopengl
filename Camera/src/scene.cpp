@@ -149,8 +149,6 @@ void Scene::run()
     /* uncomment to draw in wireframe mode */
     /* glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); */
 
-    SDL_Event event;
-
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
@@ -168,45 +166,22 @@ void Scene::run()
     };
 
 
-    /* glm::vec3 camPosition = glm::vec3(0.0f, 0.0f, 3.0f); */
-    /* glm::vec3 camTarget = glm::vec3(0.0f, 0.0f, 0.0f); */
-    /* glm::vec3 camDirection = glm::normalize(camPosition - camTarget); */
+    camPosition = glm::vec3(0.0f, 0.0f, 3.0f);
+    camFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    camUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    /* glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); */
-    /* glm::vec3 camRight = glm::normalize(glm::cross(up, camDirection)); */
-
-    /* glm::vec3 camUp = glm::cross(camDirection, camRight); */
+    deltaTime = 0.0f;
+    lastFrame = 0.0f;
+    speed = 0.5f;
 
     while (true) {
-        bool done = false;
-        while (SDL_PollEvent(&event) != 0) {
-            switch (event.type) {
-                case SDL_QUIT:
-                    done = true;
-                    break;
-
-                case SDL_KEYDOWN:
-                    switch (event.key.keysym.sym) {
-                        case SDLK_ESCAPE:
-                            done = true;
-                    }
-                    break;
-                case SDL_WINDOWEVENT:
-                    switch (event.window.event) {
-                        case SDL_WINDOWEVENT_RESIZED:
-                        case SDL_WINDOWEVENT_SIZE_CHANGED:
-                            width = event.window.data1;
-                            height = event.window.data2;
-                            updateProjView();
-                            break;
-                    }
-                    break;
-            }
-            if (done)
-                break;
-        }
+        bool done = processEvent();
         if (done)
             break;
+
+        float currentFrame = SDL_GetTicks();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -222,13 +197,8 @@ void Scene::run()
         glBindVertexArray(VAO);
 
         /* Setup View matrix */
-        /* glm::mat4 view = glm::lookAt(camPosition, camTarget, camUp); */
-        GLfloat radius = 10.0f;
-        GLfloat camX = sin(SDL_GetTicks() / 1000.0f) * radius;
-        GLfloat camZ = cos(SDL_GetTicks() / 1000.0f) * radius;
-        glm::mat4 view = glm::lookAt(glm::vec3(camX, 0.0f, camZ),
-                                     glm::vec3(0.0f, 0.0f, 0.0f),
-                                     glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 view = glm::lookAt(camPosition, camPosition + camFront,
+                                     camUp);
 
         /* Projection matrix is updated when needed */
         shader.setMat4("projection", glm::value_ptr(projection));
@@ -294,4 +264,64 @@ bool Scene::init(string &res_path)
     }
 
     return true;
+}
+
+
+bool Scene::processEvent()
+{
+    bool done = false;
+    float camSpeed = speed * deltaTime;
+    const glm::vec3 camLeft = glm::normalize(glm::cross(camFront, camUp));
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event) != 0) {
+        switch (event.type) {
+            case SDL_QUIT:
+                done = true;
+                break;
+
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym) {
+                    case SDLK_ESCAPE:
+                        done = true;
+                        break;
+                    case SDLK_z:
+                        camPosition += camSpeed * camFront;
+                        break;
+                    case SDLK_s:
+                        camPosition -= camSpeed * camFront;
+                        break;
+                    case SDLK_q:
+                        camPosition -= camSpeed * camLeft;
+                        break;
+                    case SDLK_d:
+                        camPosition += camSpeed * camLeft;
+                        break;
+                    case SDLK_KP_MINUS:
+                        if (speed > 0.06f) {
+                            speed -= 0.05f;
+                            cout << speed << endl;
+                        }
+                        break;
+                    case SDLK_KP_PLUS:
+                        speed += 0.05f;
+                        cout << speed << endl;
+                        break;
+                }
+                break;
+            case SDL_WINDOWEVENT:
+                switch (event.window.event) {
+                    case SDL_WINDOWEVENT_RESIZED:
+                    case SDL_WINDOWEVENT_SIZE_CHANGED:
+                        width = event.window.data1;
+                        height = event.window.data2;
+                        updateProjView();
+                        break;
+                }
+                break;
+        }
+        if (done)
+            break;
+    }
+    return done;
 }

@@ -32,6 +32,15 @@ namespace vinz {
             glm::mat4 projection;
 
             void updateProjView();
+            bool processEvent();
+
+            glm::vec3 camPosition;
+            glm::vec3 camFront;
+            glm::vec3 camUp;
+
+            float deltaTime;
+            float lastFrame;
+            float speed;
 
         public:
             Scene() = delete;
