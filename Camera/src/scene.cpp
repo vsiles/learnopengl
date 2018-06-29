@@ -168,14 +168,14 @@ void Scene::run()
     };
 
 
-    glm::vec3 camPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-    glm::vec3 camTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 camDirection = glm::normalize(camPosition - camTarget);
+    /* glm::vec3 camPosition = glm::vec3(0.0f, 0.0f, 3.0f); */
+    /* glm::vec3 camTarget = glm::vec3(0.0f, 0.0f, 0.0f); */
+    /* glm::vec3 camDirection = glm::normalize(camPosition - camTarget); */
 
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-    glm::vec3 camRight = glm::normalize(glm::cross(up, camDirection));
+    /* glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); */
+    /* glm::vec3 camRight = glm::normalize(glm::cross(up, camDirection)); */
 
-    glm::vec3 camUp = glm::cross(camDirection, camRight);
+    /* glm::vec3 camUp = glm::cross(camDirection, camRight); */
 
     while (true) {
         bool done = false;
@@ -222,7 +222,13 @@ void Scene::run()
         glBindVertexArray(VAO);
 
         /* Setup View matrix */
-        glm::mat4 view = glm::lookAt(camPosition, camTarget, camUp);
+        /* glm::mat4 view = glm::lookAt(camPosition, camTarget, camUp); */
+        GLfloat radius = 10.0f;
+        GLfloat camX = sin(SDL_GetTicks() / 1000.0f) * radius;
+        GLfloat camZ = cos(SDL_GetTicks() / 1000.0f) * radius;
+        glm::mat4 view = glm::lookAt(glm::vec3(camX, 0.0f, camZ),
+                                     glm::vec3(0.0f, 0.0f, 0.0f),
+                                     glm::vec3(0.0f, 1.0f, 0.0f));
 
         /* Projection matrix is updated when needed */
         shader.setMat4("projection", glm::value_ptr(projection));
