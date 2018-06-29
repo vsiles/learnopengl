@@ -7,6 +7,7 @@ using namespace std;
 
 Shader::Shader(const vector<char> &shader, Shader::Type type)
 {
+    id = 0;
     ShaderFailure cause;
     if (!from_bytes(shader, type, cause))
         throw cause;
@@ -14,6 +15,7 @@ Shader::Shader(const vector<char> &shader, Shader::Type type)
 
 Shader::Shader(const string &filename, Shader::Type type)
 {
+    id = 0;
     ifstream fp;
 
     fp.open(filename.c_str(), ios_base::in);

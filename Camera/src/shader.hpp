@@ -22,7 +22,7 @@ namespace vinz {
             Shader() = delete;
             Shader(const std::string &filename, Type type);
             Shader(const std::vector<char> &shader, Type type);
-            Shader(Shader &&s) = default;
+            Shader(Shader &&) = default;
             ~Shader();
 
             /* Forbid copy or assignment */
