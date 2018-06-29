@@ -42,6 +42,9 @@ namespace vinz {
             float lastFrame;
             float speed;
 
+            float yaw;
+            float pitch;
+
         public:
             Scene() = delete;
             Scene(std::string name, int width, int height);

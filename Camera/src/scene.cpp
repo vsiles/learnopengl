@@ -170,9 +170,8 @@ void Scene::run()
     camFront = glm::vec3(0.0f, 0.0f, -1.0f);
     camUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    deltaTime = 0.0f;
-    lastFrame = 0.0f;
-    speed = 0.5f;
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    SDL_CaptureMouse(SDL_TRUE);
 
     while (true) {
         bool done = processEvent();
@@ -263,6 +262,12 @@ bool Scene::init(string &res_path)
         return false;
     }
 
+    deltaTime = 0.0f;
+    lastFrame = 0.0f;
+    speed = 0.15f;
+
+    yaw = -90.0f;
+    pitch = 0.0f;
     return true;
 }
 
@@ -318,6 +323,26 @@ bool Scene::processEvent()
                         updateProjView();
                         break;
                 }
+                break;
+            case SDL_MOUSEMOTION:
+                float sensitivity = 0.05f;
+
+                float xoffset = event.motion.xrel * sensitivity;
+                float yoffset = event.motion.yrel * sensitivity;
+
+                yaw += xoffset;
+                pitch += yoffset;
+
+                if (pitch > 89.0f)
+                    pitch = 89.0f;
+                if (pitch < -89.0f)
+                    pitch = -89.0f;
+
+                glm::vec3 front;
+                front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+                front.y = sin(glm::radians(pitch));
+                front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+                camFront = glm::normalize(front);
                 break;
         }
         if (done)
