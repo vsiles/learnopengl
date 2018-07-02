@@ -10,7 +10,6 @@
 #include "camera.hpp"
 #include "main.hpp"
 #include "shader.hpp"
-#include "texture.hpp"
 
 struct SceneFailure {
     enum class Cause {
@@ -29,7 +28,7 @@ namespace vinz {
             int width;
             int height;
             ShaderProgram shader;
-            Texture tex0, tex1;
+            ShaderProgram lampShader;
             glm::mat4 projection;
 
             void updateProjView();

@@ -87,19 +87,6 @@ void Scene::run()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
-    static glm::vec3 cubePositions[] = {
-        glm::vec3( 0.0f,  0.0f,  0.0f),
-        glm::vec3( 2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3( 2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3( 1.3f, -2.0f, -2.5f),
-        glm::vec3( 1.5f,  2.0f, -2.5f),
-        glm::vec3( 1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-
     camera.setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
 
     SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -117,29 +104,29 @@ void Scene::run()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.activate();
-        glActiveTexture(GL_TEXTURE0);
-        tex0.bind();
-        glActiveTexture(GL_TEXTURE1);
-        tex1.bind();
-
-        shader.setInt("texture1", 0);
-        shader.setInt("texture2", 1);
+        shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 
         /* Projection matrix is updated when needed */
         shader.setMat4("projection", glm::value_ptr(projection));
         glm::mat4 view = camera.view();
         shader.setMat4("view", glm::value_ptr(view));
 
-        for(unsigned int i = 0; i < 10; i++)
-        {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            GLfloat angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.setMat4("model", glm::value_ptr(model));
+        glm::mat4 model = glm::mat4(1.0f);
+        shader.setMat4("model", glm::value_ptr(model));
 
-            cube.render();
-        }
+        /* Draw cube */
+        cube.render();
+
+        lampShader.activate();
+        lampShader.setMat4("projection", glm::value_ptr(projection));
+        lampShader.setMat4("view", glm::value_ptr(view));
+        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f));
+        lampShader.setMat4("model", glm::value_ptr(model));
+        cube.render();
 
         SDL_GL_SwapWindow(window);
     }
@@ -148,16 +135,21 @@ void Scene::run()
 
 bool Scene::init(string &res_path)
 {
-    string vertex_shader = res_path + "shaders/coordsys.vert";
-    string fragment_shader = res_path + "shaders/coordsys.frag";
+    string vertex_shader = res_path + "shaders/lighttest-1.vert";
+    string fragment_shader = res_path + "shaders/lighttest-1.frag";
+    string lamp_fragment_shader = res_path + "shaders/lamp.frag";
 
     try {
         cerr << "Vertex shader compiling..." << endl;
         Shader vert(vertex_shader, Shader::Type::Vertex);
         cerr << "Fragment shader compiling..." << endl;
         Shader frag(fragment_shader, Shader::Type::Fragment);
+        cerr << "Fragment shader (lamp) compiling..." << endl;
+        Shader lfrag(lamp_fragment_shader, Shader::Type::Fragment);
         ShaderFailure cause;
         if (!shader.init(vert, frag, cause))
+            throw cause;
+        if (!lampShader.init(vert, lfrag, cause))
             throw cause;
     } catch (ShaderFailure &excp) {
         switch (excp.cause) {
@@ -172,17 +164,6 @@ bool Scene::init(string &res_path)
                 cerr << "Can't access shader file" << endl;
                 break;
         }
-        return false;
-    }
-
-    cerr << "Loading container.jpg" << endl;
-    if (!tex0.init(res_path + "images/container.jpg")) {
-        cerr << "Can't load container.jpg" << endl;
-        return false;
-    }
-    cerr << "Loading awesomeface.png" << endl;
-    if (!tex1.init(res_path + "images/awesomeface.png")) {
-        cerr << "Can't load awesomeface.png" << endl;
         return false;
     }
 

@@ -57,6 +57,8 @@ namespace vinz {
             void setInt(const std::string &name, GLint value) const;
             void setFloat(const std::string &name, GLfloat value) const;
             void setMat4(const std::string &name, GLfloat *ptr) const;
+            void setVec3(const std::string &name, GLfloat x, GLfloat y,
+                         GLfloat z) const;
             void activate(void) const;
     };
 };

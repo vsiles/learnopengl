@@ -143,3 +143,10 @@ void ShaderProgram::setMat4(const string &name, GLfloat *ptr) const
     GLint loc = glGetUniformLocation(id, name.c_str());
     glUniformMatrix4fv(loc, 1, GL_FALSE, ptr);
 }
+
+void ShaderProgram::setVec3(const string &name, GLfloat x, GLfloat y,
+                            GLfloat z) const
+{
+    GLint loc = glGetUniformLocation(id, name.c_str());
+    glUniform3f(loc, x, y, z);
+}
