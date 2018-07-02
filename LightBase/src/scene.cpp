@@ -106,8 +106,11 @@ void Scene::run()
         glm::vec3 lightPos(1.2f * cos(ldelta), 1.0f, sin(ldelta) * 2.0f);
 
         shader.activate();
-        shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        shader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
+        shader.setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
+        shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+        shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+        shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
         const glm::vec3 &pos = camera.getPosition();
         shader.setVec3("viewPos", pos.x, pos.y, pos.z);
         shader.setVec3("material.ambiant", 1.0f, 0.5f, 0.31f);
