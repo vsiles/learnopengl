@@ -40,7 +40,8 @@ namespace vinz {
 
             Camera camera;
 
-            Texture tex0;
+            Texture crate_diffuse;
+            Texture crate_specular;
 
         public:
             Scene() = delete;

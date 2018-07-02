@@ -46,6 +46,7 @@ bool Texture::init(SDL_Surface *surf)
 
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
+    cerr << "Binding " << id << endl;
 
     GLenum internalFormat, format;
     if (surf->format->BytesPerPixel == 3) {
@@ -60,6 +61,8 @@ bool Texture::init(SDL_Surface *surf)
             format = GL_RGBA;
         else
             format = GL_BGRA;
+    } else if (surf->format->BytesPerPixel == 1) {
+        internalFormat = format = GL_RED;
     } else {
         cerr << "Unsupported BPP: " << surf->format->BytesPerPixel << endl;
         glBindTexture(GL_TEXTURE_2D, 0);

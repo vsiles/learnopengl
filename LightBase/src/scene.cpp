@@ -115,7 +115,7 @@ void Scene::run()
         shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
         shader.setInt("material.diffuse", 0);
-        shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        shader.setInt("material.specular", 1);
         shader.setFloat("material.shininess", 64.0f);
 
         /* Projection matrix is updated when needed */
@@ -128,7 +128,9 @@ void Scene::run()
 
         /* Bind the Texture */
         glActiveTexture(GL_TEXTURE0);
-        tex0.bind();
+        crate_diffuse.bind();
+        glActiveTexture(GL_TEXTURE1);
+        crate_specular.bind();
 
         /* Draw cube */
         cube.render();
@@ -182,8 +184,13 @@ bool Scene::init(string &res_path)
     }
 
     cerr << "Loading container.png" << endl;
-    if (!tex0.init(res_path + "images/container.png")) {
+    if (!crate_diffuse.init(res_path + "images/container.png")) {
         cerr << "Can't load container.png" << endl;
+        return false;
+    }
+    cerr << "Loading container_specular.png" << endl;
+    if (!crate_specular.init(res_path + "images/container_specular.png")) {
+        cerr << "Can't load container_specular.png" << endl;
         return false;
     }
     deltaTime = 0.0f;
