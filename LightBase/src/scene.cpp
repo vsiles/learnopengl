@@ -108,6 +108,8 @@ void Scene::run()
         shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         shader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
+        const glm::vec3 &pos = camera.getPosition();
+        shader.setVec3("viewPos", pos.x, pos.y, pos.z);
 
         /* Projection matrix is updated when needed */
         shader.setMat4("projection", glm::value_ptr(projection));

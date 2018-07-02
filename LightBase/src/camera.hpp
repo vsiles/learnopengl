@@ -37,7 +37,7 @@ namespace vinz {
                 position = glm::vec3(0.0f);
                 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-                speed = 0.15f;
+                speed = 0.05f;
                 sensitivity = 0.05f;
 
                 yaw = -90.0f;
@@ -68,6 +68,11 @@ namespace vinz {
             void setPosition(const glm::vec3 &pos)
             {
                 position = pos;
+            }
+
+            const glm::vec3 &getPosition() const
+            {
+                return position;
             }
 
             glm::mat4 view() const
