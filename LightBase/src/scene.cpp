@@ -105,10 +105,20 @@ void Scene::run()
         float ldelta = currentFrame / 1000.0f;
         glm::vec3 lightPos(1.2f * cos(ldelta), 1.0f, sin(ldelta) * 2.0f);
 
+        glm::vec3 lightColor;
+        lightColor.x = sin(ldelta * 2.0f);
+        lightColor.y = sin(ldelta * 0.7f);
+        lightColor.z = sin(ldelta * 1.3f);
+
+        glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
+
         shader.activate();
         shader.setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
-        shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-        shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+        shader.setVec3("light.ambient", ambientColor.x, ambientColor.x,
+                       ambientColor.z);
+        shader.setVec3("light.diffuse", diffuseColor.x, diffuseColor.y,
+                       diffuseColor.z);
         shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
         const glm::vec3 &pos = camera.getPosition();
