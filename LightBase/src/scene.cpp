@@ -91,6 +91,7 @@ void Scene::run()
 
     SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_CaptureMouse(SDL_TRUE);
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
     while (true) {
         bool done = processEvent();
@@ -106,6 +107,7 @@ void Scene::run()
         shader.activate();
         shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        shader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
 
         /* Projection matrix is updated when needed */
         shader.setMat4("projection", glm::value_ptr(projection));
@@ -121,7 +123,6 @@ void Scene::run()
         lampShader.activate();
         lampShader.setMat4("projection", glm::value_ptr(projection));
         lampShader.setMat4("view", glm::value_ptr(view));
-        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
         model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
@@ -135,8 +136,8 @@ void Scene::run()
 
 bool Scene::init(string &res_path)
 {
-    string vertex_shader = res_path + "shaders/lighttest-1.vert";
-    string fragment_shader = res_path + "shaders/lighttest-1.frag";
+    string vertex_shader = res_path + "shaders/lighttest-2.vert";
+    string fragment_shader = res_path + "shaders/lighttest-2.frag";
     string lamp_fragment_shader = res_path + "shaders/lamp.frag";
 
     try {

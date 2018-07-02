@@ -66,6 +66,10 @@ void Cube::init()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
                           nullptr);
     glEnableVertexAttribArray(0);
+    /* 1 as in 'location = 1' in the vertex shader: normal */
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                          reinterpret_cast<void *>(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
     glBindVertexArray(0);
     /* Doing after the VAO is unbound */
     glBindBuffer(GL_ARRAY_BUFFER, 0);
