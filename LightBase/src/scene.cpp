@@ -91,7 +91,6 @@ void Scene::run()
 
     SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_CaptureMouse(SDL_TRUE);
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
     while (true) {
         bool done = processEvent();
@@ -103,6 +102,8 @@ void Scene::run()
         lastFrame = currentFrame;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        float ldelta = currentFrame / 1000.0f;
+        glm::vec3 lightPos(1.2f * cos(ldelta), 1.0f, sin(ldelta) * 2.0f);
 
         shader.activate();
         shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
