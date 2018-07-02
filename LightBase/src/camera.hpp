@@ -7,76 +7,76 @@
 
 namespace vinz {
 
-class Camera
-{
-    private:
-        glm::vec3 position;
-        glm::vec3 front;
-        glm::vec3 up;
-        glm::vec3 right;
-        glm::vec3 worldUp;
+    class Camera
+    {
+        private:
+            glm::vec3 position;
+            glm::vec3 front;
+            glm::vec3 up;
+            glm::vec3 right;
+            glm::vec3 worldUp;
 
-        float speed;
-        float yaw;
-        float pitch;
-        float sensitivity;
-        
-        void update();
+            float speed;
+            float yaw;
+            float pitch;
+            float sensitivity;
 
-    public:
-        enum class Movement
-        {
-            FORWARD,
-            BACKWARD,
-            LEFT,
-            RIGHT
-        };
+            void update();
 
-        Camera()
-        {
-            position = glm::vec3(0.0f);
-            worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        public:
+            enum class Movement
+            {
+                FORWARD,
+                BACKWARD,
+                LEFT,
+                RIGHT
+            };
 
-            speed = 0.15f;
-            sensitivity = 0.05f;
+            Camera()
+            {
+                position = glm::vec3(0.0f);
+                worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-            yaw = -90.0f;
-            pitch = 0.0f;
+                speed = 0.15f;
+                sensitivity = 0.05f;
 
-            update();
-        }
+                yaw = -90.0f;
+                pitch = 0.0f;
 
-        Camera(const glm::vec3 &pos, const glm::vec3 &up, float yaw,
-               float pitch, float speed = 0.15f, float sensitivity = 0.05f)
-        {
-            this->position = pos;
-            this->worldUp = up;
-            this->yaw = yaw;
-            this->pitch = pitch;
-            this->speed = speed;
-            this->sensitivity = sensitivity;
+                update();
+            }
 
-            update();
-        }
+            Camera(const glm::vec3 &pos, const glm::vec3 &up, float yaw,
+                   float pitch, float speed = 0.15f, float sensitivity = 0.05f)
+            {
+                this->position = pos;
+                this->worldUp = up;
+                this->yaw = yaw;
+                this->pitch = pitch;
+                this->speed = speed;
+                this->sensitivity = sensitivity;
 
-        Camera(const Camera &) = default;
-        Camera(Camera &&) = default;
-        ~Camera() {}
-        Camera &operator=(Camera const &cam) = default;
-        Camera &operator=(Camera &&cam) = default;
+                update();
+            }
 
-        void setPosition(const glm::vec3 &pos)
-        {
-            position = pos;
-        }
+            Camera(const Camera &) = default;
+            Camera(Camera &&) = default;
+            ~Camera() {}
+            Camera &operator=(Camera const &cam) = default;
+            Camera &operator=(Camera &&cam) = default;
 
-        glm::mat4 view() const
-        {
-            return glm::lookAt(position, position + front, up);
-        }
+            void setPosition(const glm::vec3 &pos)
+            {
+                position = pos;
+            }
 
-        void processKeys(Movement direction, float delta);
-        void processMotion(float xoffset, float yoffset,
-                           bool constraint = true);
-};
+            glm::mat4 view() const
+            {
+                return glm::lookAt(position, position + front, up);
+            }
+
+            void processKeys(Movement direction, float delta);
+            void processMotion(float xoffset, float yoffset,
+                               bool constraint = true);
+    };
 };

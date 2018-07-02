@@ -20,18 +20,18 @@ void Camera::processKeys(Camera::Movement direction, float delta)
 {
     float velocity = speed * delta;
     switch(direction) {
-    case Camera::Movement::FORWARD:
-        position += velocity * front;
-        break;
-    case Camera::Movement::BACKWARD:
-        position -= velocity * front;
-        break;
-    case Camera::Movement::LEFT:
-        position -= velocity * right;
-        break;
-    case Camera::Movement::RIGHT:
-        position += velocity * right;
-        break;
+        case Camera::Movement::FORWARD:
+            position += velocity * front;
+            break;
+        case Camera::Movement::BACKWARD:
+            position -= velocity * front;
+            break;
+        case Camera::Movement::LEFT:
+            position -= velocity * right;
+            break;
+        case Camera::Movement::RIGHT:
+            position += velocity * right;
+            break;
     }
 }
 
