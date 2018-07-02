@@ -107,10 +107,13 @@ void Scene::run()
 
         shader.activate();
         shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         shader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
         const glm::vec3 &pos = camera.getPosition();
         shader.setVec3("viewPos", pos.x, pos.y, pos.z);
+        shader.setVec3("material.ambiant", 1.0f, 0.5f, 0.31f);
+        shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        shader.setFloat("material.shininess", 32.0f);
 
         /* Projection matrix is updated when needed */
         shader.setMat4("projection", glm::value_ptr(projection));
@@ -139,8 +142,8 @@ void Scene::run()
 
 bool Scene::init(string &res_path)
 {
-    string vertex_shader = res_path + "shaders/lighttest-2.vert";
-    string fragment_shader = res_path + "shaders/lighttest-2.frag";
+    string vertex_shader = res_path + "shaders/lighttest-3.vert";
+    string fragment_shader = res_path + "shaders/lighttest-3.frag";
     string lamp_fragment_shader = res_path + "shaders/lamp.frag";
 
     try {
