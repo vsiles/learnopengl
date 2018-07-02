@@ -208,6 +208,14 @@ bool Scene::processEvent()
                         camera.processKeys(Camera::Movement::RIGHT,
                                            deltaTime);
                         break;
+                    case SDLK_SPACE:
+                        camera.processKeys(Camera::Movement::UP,
+                                           deltaTime);
+                        break;
+                    case SDLK_LCTRL:
+                        camera.processKeys(Camera::Movement::DOWN,
+                                           deltaTime);
+                        break;
                 }
                 break;
             case SDL_WINDOWEVENT:

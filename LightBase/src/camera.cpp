@@ -32,6 +32,12 @@ void Camera::processKeys(Camera::Movement direction, float delta)
         case Camera::Movement::RIGHT:
             position += velocity * right;
             break;
+        case Camera::Movement::UP:
+            position += velocity * up;
+            break;
+        case Camera::Movement::DOWN:
+            position -= velocity * up;
+            break;
     }
 }
 
