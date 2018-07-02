@@ -84,7 +84,7 @@ void Scene::run()
     /* uncomment to draw in wireframe mode */
     /* glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); */
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
     camera.setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -105,28 +105,18 @@ void Scene::run()
         float ldelta = currentFrame / 1000.0f;
         glm::vec3 lightPos(1.2f * cos(ldelta), 1.0f, sin(ldelta) * 2.0f);
 
-        glm::vec3 lightColor;
-        lightColor.x = sin(ldelta * 2.0f);
-        lightColor.y = sin(ldelta * 0.7f);
-        lightColor.z = sin(ldelta * 1.3f);
-
-        glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
-        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
-
         shader.activate();
         shader.setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
-        shader.setVec3("light.ambient", ambientColor.x, ambientColor.x,
-                       ambientColor.z);
-        shader.setVec3("light.diffuse", diffuseColor.x, diffuseColor.y,
-                       diffuseColor.z);
-        shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-
         const glm::vec3 &pos = camera.getPosition();
         shader.setVec3("viewPos", pos.x, pos.y, pos.z);
-        shader.setVec3("material.ambiant", 1.0f, 0.5f, 0.31f);
-        shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+
+        shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+        shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+        shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+        shader.setInt("material.diffuse", 0);
         shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-        shader.setFloat("material.shininess", 32.0f);
+        shader.setFloat("material.shininess", 64.0f);
 
         /* Projection matrix is updated when needed */
         shader.setMat4("projection", glm::value_ptr(projection));
@@ -135,6 +125,10 @@ void Scene::run()
 
         glm::mat4 model = glm::mat4(1.0f);
         shader.setMat4("model", glm::value_ptr(model));
+
+        /* Bind the Texture */
+        glActiveTexture(GL_TEXTURE0);
+        tex0.bind();
 
         /* Draw cube */
         cube.render();
@@ -155,8 +149,8 @@ void Scene::run()
 
 bool Scene::init(string &res_path)
 {
-    string vertex_shader = res_path + "shaders/lighttest-3.vert";
-    string fragment_shader = res_path + "shaders/lighttest-3.frag";
+    string vertex_shader = res_path + "shaders/lighttest-4.vert";
+    string fragment_shader = res_path + "shaders/lighttest-4.frag";
     string lamp_fragment_shader = res_path + "shaders/lamp.frag";
 
     try {
@@ -187,6 +181,11 @@ bool Scene::init(string &res_path)
         return false;
     }
 
+    cerr << "Loading container.png" << endl;
+    if (!tex0.init(res_path + "images/container.png")) {
+        cerr << "Can't load container.png" << endl;
+        return false;
+    }
     deltaTime = 0.0f;
     lastFrame = 0.0f;
     return true;

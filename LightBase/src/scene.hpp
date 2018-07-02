@@ -10,6 +10,7 @@
 #include "camera.hpp"
 #include "main.hpp"
 #include "shader.hpp"
+#include "texture.hpp"
 
 struct SceneFailure {
     enum class Cause {
@@ -38,6 +39,8 @@ namespace vinz {
             float lastFrame;
 
             Camera camera;
+
+            Texture tex0;
 
         public:
             Scene() = delete;
