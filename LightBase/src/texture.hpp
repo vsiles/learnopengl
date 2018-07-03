@@ -10,7 +10,9 @@ namespace vinz {
         private:
             GLuint id;
             bool init(SDL_Surface *surf);
-            static SDL_Surface* flip(SDL_Surface *surf);
+            static SDL_Surface *flip(SDL_Surface *surf);
+            static SDL_Surface *convert(SDL_Surface *surf);
+            SDL_Surface *prepare(SDL_Surface *surf);
 
         public:
             Texture(): id(0) {}

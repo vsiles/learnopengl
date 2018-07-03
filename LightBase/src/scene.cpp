@@ -1,4 +1,6 @@
 #include <iostream>
+#include <SDL.h>
+#include <SDL_image.h>
 /* #define GLM_FORCE_MESSAGES */
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -50,16 +52,28 @@ Scene::Scene(string name, int width, int height) : camera()
     }
 
     if (gl3wInit()) {
+        SDL_DestroyWindow(window);
+        SDL_Quit();
         throw SceneFailure(SceneFailure::Cause::Extension, "gl3w");
     }
 
     if (!gl3wIsSupported(4, 2)) {
+        SDL_DestroyWindow(window);
+        SDL_Quit();
         throw SceneFailure(SceneFailure::Cause::Extension, "4.2");
+    }
+
+    ret = IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
+    if ((ret & (IMG_INIT_JPG | IMG_INIT_PNG)) == 0) {
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        throw SceneFailure(SceneFailure::Cause::Init, "IMG_Init");
     }
 }
 
 Scene::~Scene()
 {
+    IMG_Quit();
     SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(window);
     SDL_Quit();

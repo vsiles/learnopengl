@@ -28,7 +28,6 @@ void main()
     // Texture lookup
     vec3 dcolor = vec3(texture(material.diffuse, TexCoords));
     vec3 scolor = vec3(texture(material.specular, TexCoords));
-    scolor = vec3(scolor.r, scolor.r, scolor.r);
 
     // diffuse
     vec3 norm = normalize(Normal);

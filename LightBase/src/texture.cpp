@@ -12,7 +12,7 @@ Texture::~Texture()
         glDeleteTextures(1, &id);
 }
 
-SDL_Surface* Texture::flip(SDL_Surface *surf)
+SDL_Surface *Texture::flip(SDL_Surface *surf)
 {
     SDL_Surface *isurf;
     int w = surf->w;
@@ -41,14 +41,9 @@ SDL_Surface* Texture::flip(SDL_Surface *surf)
 
 bool Texture::init(SDL_Surface *surf)
 {
-    if (glIsTexture(id))
-        glDeleteTextures(1, &id);
-
-    glGenTextures(1, &id);
-    glBindTexture(GL_TEXTURE_2D, id);
-    cerr << "Binding " << id << endl;
-
+    /* Gather surface information */
     GLenum internalFormat, format;
+
     if (surf->format->BytesPerPixel == 3) {
         internalFormat = GL_RGB;
         if (surf->format->Rmask == 0xff)
@@ -61,16 +56,19 @@ bool Texture::init(SDL_Surface *surf)
             format = GL_RGBA;
         else
             format = GL_BGRA;
-    } else if (surf->format->BytesPerPixel == 1) {
-        internalFormat = format = GL_RED;
     } else {
-        cerr << "Unsupported BPP: " << surf->format->BytesPerPixel << endl;
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDeleteTextures(1, &id);
+        /* Should be deadcode by now, but won't hurt */
+        cerr << "Unsupported BPP: " << (int)surf->format->BytesPerPixel;
+        cerr << endl;
         return false;
     }
 
+    /* Texture is validated, time to OpenGL it */
+    if (glIsTexture(id))
+        glDeleteTextures(1, &id);
 
+    glGenTextures(1, &id);
+    glBindTexture(GL_TEXTURE_2D, id);
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, surf->w, surf->h, 0, format,
                  GL_UNSIGNED_BYTE, surf->pixels);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -83,6 +81,41 @@ bool Texture::init(SDL_Surface *surf)
 
     glBindTexture(GL_TEXTURE_2D, 0);
     return true;
+}
+
+SDL_Surface *Texture::prepare(SDL_Surface *surf)
+{
+    Uint8 bpp = surf->format->BytesPerPixel;
+    if ((bpp == 3) || (bpp == 4)) {
+        /* Nothing to convert */
+    } else if (bpp != 1) {
+        cerr << "Unsupported BPP: " << (int)surf->format->BytesPerPixel;
+        cerr << endl;
+        SDL_FreeSurface(surf);
+        return nullptr;
+    } else {
+        /* Need to convert from 'grayscale/palette' to RGBA */
+        /* FIXME: SDL_PIXELFORMAT_ABGR8888 for little endian
+         * SDL_PIXELFORMAT_RGBA32 is an 'endianess free' alias,
+         * but only available on SLD2 > 2.0.5
+         */
+        SDL_Surface *csurf;
+        csurf = SDL_ConvertSurfaceFormat(surf, SDL_PIXELFORMAT_ABGR8888, 0);
+        SDL_FreeSurface(surf);
+        if (csurf == nullptr) {
+            cerr << "Can't convert surface: " << SDL_GetError() << endl;
+            return nullptr;
+        }
+        surf = csurf;
+    }
+
+    SDL_Surface *isurf = flip(surf);
+    SDL_FreeSurface(surf);
+    if (isurf == nullptr) {
+        cerr << "Can't flip surface" << endl;
+        return nullptr;
+    }
+    return isurf;
 }
 
 bool Texture::init(const vector<unsigned char> &data, size_t bytes)
@@ -99,15 +132,13 @@ bool Texture::init(const vector<unsigned char> &data, size_t bytes)
         cerr << "IMG_Load_RW() failure: " << SDL_GetError() << endl;
         return false;
     }
-    SDL_Surface *isurf = flip(surf);
-    SDL_FreeSurface(surf);
-    if (isurf == nullptr) {
-        cerr << "Can't flip surface" << endl;
+    surf = prepare(surf);
+    if (surf == nullptr) {
         return false;
     }
 
-    bool ok = init(isurf);
-    SDL_FreeSurface(isurf);
+    bool ok = init(surf);
+    SDL_FreeSurface(surf);
     return ok;
 }
 
@@ -119,15 +150,12 @@ bool Texture::init(const string &path)
         return false;
     }
 
-    SDL_Surface *isurf = flip(surf);
-    SDL_FreeSurface(surf);
-    if (isurf == nullptr) {
-        cerr << "Can't flip surface" << endl;
+    surf = prepare(surf);
+    if (surf == nullptr)
         return false;
-    }
 
-    bool ok = init(isurf);
-    SDL_FreeSurface(isurf);
+    bool ok = init(surf);
+    SDL_FreeSurface(surf);
     return ok;
 }
 
